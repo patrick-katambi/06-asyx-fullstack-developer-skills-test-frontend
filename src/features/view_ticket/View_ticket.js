@@ -10,9 +10,13 @@ import {
   updateSearchResults,
 } from "./view_ticket_slice";
 
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+
 import "./view_ticket.css";
 
 function View_ticket() {
+  let navigate = useNavigate();
+
   const [inputValue, setInputValue] = useState("");
 
   const dispatch = useDispatch();
@@ -47,7 +51,12 @@ function View_ticket() {
               className="bg-[whitesmoke] px-5 py-5 font-bold rounded-lg border-none outline-none"
             />
             <div className="">
-              <button className="h-full bg-[#D8AC9C] px-6 py-5 font-bold rounded-lg">Create Ticket</button>
+              <button
+                className="h-full bg-[#D8AC9C] px-6 py-5 font-bold rounded-lg"
+                onClick={() => navigate("/create")}
+              >
+                Create Ticket
+              </button>
             </div>
           </div>
           <TicketTable tickets={ticketsToDisplay} />
