@@ -3,8 +3,11 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   fetchTickets,
   getTicketFetchingStatus,
+  getTicketListToDisplay,
   getTickets,
   getValue,
+  setInitialNewTiketList,
+  updateSearchResults,
 } from "./view_ticket_slice";
 
 import "./view_ticket.css";
@@ -12,16 +15,21 @@ import "./view_ticket.css";
 function View_ticket() {
   const [inputValue, setInputValue] = useState("");
 
-  const status = useSelector(getTicketFetchingStatus);
   const dispatch = useDispatch();
   const tickets = useSelector(getTickets);
+  const ticketsToDisplay = useSelector(getTicketListToDisplay);
+  const status = useSelector(getTicketFetchingStatus);
+
   useEffect(() => {
     dispatch(fetchTickets());
   }, []);
 
   const inputOnChange = (event) => {
-    setInputValue(event.target.value)
-    var newTicketList = tickets.filter(ticket => {})
+    setInputValue(event.target.value);
+    var newTicketList = tickets.filter((ticket) =>
+      ticket.id.includes(event.target.value)
+    );
+    dispatch(updateSearchResults(newTicketList));
   };
 
   return (
@@ -34,10 +42,10 @@ function View_ticket() {
             type="text"
             value={inputValue}
             onChange={inputOnChange}
-            placeholder="Search .."
+            placeholder="Search id .."
             className="bg-[whitesmoke] mt-5 ml-5 px-5 py-4 font-bold rounded-lg border-none outline-none"
           />
-          <TicketTable tickets={tickets} />
+          <TicketTable tickets={ticketsToDisplay} />
         </>
       )}
     </div>
@@ -81,7 +89,7 @@ function TableHead() {
     "DUE DATE",
     "CATEGORY",
     "PRIORITY",
-    "STATE"
+    "STATE",
   ];
   return (
     <thead className="bg-[#C2B092] text-left shadow-emerald-900">
