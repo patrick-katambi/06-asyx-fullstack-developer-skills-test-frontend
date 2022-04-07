@@ -38,13 +38,18 @@ function View_ticket() {
         <FetchingTicketsLoading />
       ) : (
         <>
-          <input
-            type="text"
-            value={inputValue}
-            onChange={inputOnChange}
-            placeholder="Search id .."
-            className="bg-[whitesmoke] mt-5 ml-5 px-5 py-4 font-bold rounded-lg border-none outline-none"
-          />
+          <div className="mx-5 p-4 flex flex-row items-center justify-between">
+            <input
+              type="text"
+              value={inputValue}
+              onChange={inputOnChange}
+              placeholder="Search id .."
+              className="bg-[whitesmoke] px-5 py-5 font-bold rounded-lg border-none outline-none"
+            />
+            <div className="">
+              <button className="h-full bg-[#D8AC9C] px-6 py-5 font-bold rounded-lg">Create Ticket</button>
+            </div>
+          </div>
           <TicketTable tickets={ticketsToDisplay} />
         </>
       )}
