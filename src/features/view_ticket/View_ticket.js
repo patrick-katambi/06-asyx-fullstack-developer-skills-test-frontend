@@ -6,13 +6,18 @@ import {
   getTicketListToDisplay,
   getTickets,
   getValue,
+  populateTickets,
   setInitialNewTiketList,
   updateSearchResults,
 } from "./view_ticket_slice";
 
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useParams, useNavigate, useLocation, Link } from "react-router-dom";
 
 import "./view_ticket.css";
+import { getAcessToken } from "../../app/globalStateSlice";
+import { urls } from "../../core/urls";
+import { getRequest } from "../../core/helper_functions";
+import axios from "axios";
 
 function View_ticket() {
   let navigate = useNavigate();
@@ -24,8 +29,22 @@ function View_ticket() {
   const ticketsToDisplay = useSelector(getTicketListToDisplay);
   const status = useSelector(getTicketFetchingStatus);
 
+  const accessToken = useSelector(getAcessToken);
+
   useEffect(() => {
-    dispatch(fetchTickets());
+    console.log(accessToken);
+    axios
+      .get(urls.ticket.getAll, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+      .then((response) => {
+        console.log(response);
+        dispatch(populateTickets(response.data));
+      });
   }, []);
 
   const inputOnChange = (event) => {
@@ -41,8 +60,12 @@ function View_ticket() {
       {status !== "idle" ? (
         <FetchingTicketsLoading />
       ) : (
-        <>
-          <div className="mx-5 p-4 flex flex-row items-center justify-between">
+        <div className="px-[10vw] relative">
+          <p className="font-light text-[80px] text-center py-5">
+            Ticket Viewing
+          </p>
+          <p className="absolute top-[80px] right-[10vw] text-[grey] font-bold cursor-pointer opacity-80 ">Logout</p>
+          <div className="py-4 flex flex-row items-center justify-between">
             <input
               type="text"
               value={inputValue}
@@ -53,14 +76,16 @@ function View_ticket() {
             <div className="">
               <button
                 className="h-full bg-[#D8AC9C] px-6 py-5 font-bold rounded-lg"
-                onClick={() => navigate("/create")}
+                onClick={() => {
+                  console.log('navigating ...')
+                  navigate("/create")}}
               >
                 Create Ticket
               </button>
             </div>
           </div>
           <TicketTable tickets={ticketsToDisplay} />
-        </>
+        </div>
       )}
     </div>
   );
@@ -86,8 +111,8 @@ function TableRowData({ data }) {
 
 function TicketTable({ tickets }) {
   return (
-    <div className="p-5">
-      <table className="bg-[#F4F9F9] w-full rounded-lg border-collapse overflow-hidden">
+    <div className="mt-[20px]">
+      <table className="bg-[#F4F9F9] w-full rounded-lg border-collapse overflow-hidden shadow-lg">
         <TableHead />
         <TableBody tickets={tickets} />
       </table>

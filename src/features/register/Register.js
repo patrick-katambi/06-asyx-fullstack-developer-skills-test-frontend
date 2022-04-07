@@ -1,6 +1,15 @@
 import React, { useState } from "react";
+import { postRequest } from "../../core/helper_functions";
+import { urls } from "../../core/urls";
+
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setAcessToken } from "../../app/globalStateSlice";
 
 function Register() {
+  let navigate = useNavigate();
+  const dispatch = useDispatch()
+
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,7 +39,7 @@ function Register() {
     }
   };
 
-  const handleFormSubmit = (event) => {
+  const handleFormSubmit = async (event) => {
     event.preventDefault();
 
     if (password.length === 0 || confirmPassword.length === 0) {
@@ -38,16 +47,38 @@ function Register() {
     }
 
     if (password.length !== 0 && confirmPassword.length !== 0) {
-      switch (password === confirmPassword) {
-        case true:
-          setPasswordError("");
-          alert("sending data for login");
-          break;
 
-        case false:
-          setPasswordError("both password fields must be equal");
-          break;
+      if (password.length >= 8 || confirmPassword.length >= 8) {
+        switch (password === confirmPassword) {
+          case true:
+            setPasswordError("");
+            const response = await postRequest({
+              url: urls.user.register,
+              data: {
+                user_data: {
+                  name: username,
+                  email: email,
+                  password: password,
+                  password_confirmation: confirmPassword,
+                  user_group_id: 2,
+                },
+              },
+              protected: false,
+            });
+            const accessToken = response.data.token
+            console.log(accessToken)
+            dispatch(setAcessToken(accessToken))
+            navigate("/view")
+            break;
+  
+          case false:
+            setPasswordError("both password fields must be equal");
+            break;
+        }
+      } else {
+        setPasswordError("both password fields must be greater than or equal to 8");
       }
+
     }
   };
 
@@ -103,7 +134,12 @@ function Register() {
           </button>
         </form>
       </div>
-      <p className="mt-5">or you can <span className="text-lg font-thin underline underline-offset-4 cursor-pointer">Login instead</span></p>
+      <p className="mt-5">
+        or you can{" "}
+        <span className="text-lg font-thin underline underline-offset-4 cursor-pointer">
+          Login instead
+        </span>
+      </p>
     </div>
   );
 }

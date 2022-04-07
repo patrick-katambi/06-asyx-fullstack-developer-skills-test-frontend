@@ -5,9 +5,9 @@ import { urls } from "../../core/urls";
 
 export const fetchTickets = createAsyncThunk(
   "view_ticket/fetch_ickets",
-  async () => {
+  async (accessToken) => {
     const url = urls.ticket.getAll;
-    const response = await getRequest({ url });
+    const response = await getRequest({ url, accessToken });
     return response;
   }
 );
@@ -24,6 +24,10 @@ export const view_ticket_slice = createSlice({
     updateSearchResults: (state, action) => {
       state.newTicketList = action.payload;
     },
+    populateTickets: (state, action) => {
+      state.tickets = action.payload.data;
+      state.newTicketList = action.payload.data;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -54,6 +58,6 @@ export const getTicketFetchingStatus = (state) => {
   return state.view_ticket.status;
 };
 
-export const { updateSearchResults } = view_ticket_slice.actions;
+export const { updateSearchResults, populateTickets } = view_ticket_slice.actions;
 
 export default view_ticket_slice.reducer;

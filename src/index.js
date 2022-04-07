@@ -4,24 +4,31 @@ import { createRoot } from "react-dom/client";
 import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
-import { store } from "./app/store";
+// import store from "./app/store";
 import { Provider } from "react-redux";
 import * as serviceWorker from "./serviceWorker";
 import CreateTicket from "./features/create_ticket/CreateTicket";
 import Register from "./features/register/Register";
+import {store} from "./app/store";
+import { PersistGate } from "redux-persist/integration/react";
+import { persistStore } from "redux-persist";
+
+let persistor = persistStore(store);
 
 const container = document.getElementById("root");
 const root = createRoot(container);
 root.render(
-  <BrowserRouter>
-    <Provider store={store}>
+  <Provider store={store}>
+    <PersistGate loading={null} persistor={persistor}>
+    <BrowserRouter>
       <Routes>
         <Route path="/" exact element={<Register />} />
         <Route path="/view" exact element={<App tab="home" />} />
         <Route path="create" exact strict element={<CreateTicket />} />
       </Routes>
-    </Provider>
-  </BrowserRouter>
+    </BrowserRouter>
+    </PersistGate>
+  </Provider>
 );
 
 // If you want your app to work offline and load faster, you can change
