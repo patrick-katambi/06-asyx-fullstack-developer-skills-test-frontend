@@ -12,6 +12,9 @@ export async function postRequest(props) {
     const url = props.url
     const data = props.data
     const config = { headers: requestHeaders }
+    console.log({url, data, config})
     const response = await axios.post(url, data, config)
+    console.log('aaaaaa')
+    console.log({response})
     return response.data
 }

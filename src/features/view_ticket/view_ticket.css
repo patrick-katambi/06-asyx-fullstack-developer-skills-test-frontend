@@ -1,0 +1,9 @@
+.table-row {
+    cursor: pointer;
+    transition: 0.5s;
+}
+
+.table-row:hover {
+    background-color: #C2B092;
+    font-weight: bold;
+}
