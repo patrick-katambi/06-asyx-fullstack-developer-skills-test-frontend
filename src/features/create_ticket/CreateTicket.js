@@ -1,8 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 function CreateTicket() {
+  const [userData, setUserData] = useState({})
+
   return (
-    <div>CreateTicket</div>
+    <div className='h-screen w-screen bg-[whitesmoke]'>CreateTicket</div>
   )
 }
 

@@ -8,6 +8,7 @@ import { store } from "./app/store";
 import { Provider } from "react-redux";
 import * as serviceWorker from "./serviceWorker";
 import CreateTicket from "./features/create_ticket/CreateTicket";
+import Register from "./features/register/Register";
 
 const container = document.getElementById("root");
 const root = createRoot(container);
@@ -15,7 +16,8 @@ root.render(
   <BrowserRouter>
     <Provider store={store}>
       <Routes>
-        <Route path="/" exact element={<App tab="home" />} />
+        <Route path="/" exact element={<Register />} />
+        <Route path="/view" exact element={<App tab="home" />} />
         <Route path="create" exact strict element={<CreateTicket />} />
       </Routes>
     </Provider>
