@@ -13,5 +13,6 @@ export const urls = {
   categories: `${baseApiUrl}/categories`,
   resolution_codes: `${baseApiUrl}/resolution_codes`,
   impact: `${baseApiUrl}/impact`,
+  priorities: `${baseApiUrl}/priorities`,
   ticket: { getAll: `${baseApiUrl}/tickets` },
 };

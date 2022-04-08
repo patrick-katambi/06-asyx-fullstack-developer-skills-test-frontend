@@ -29,6 +29,8 @@ function CreateTicket() {
   const [impactObject, setImpactObject] = useState({});
 
   const [priority, setPriority] = useState(null);
+  const [selectedPriority, setSelectedPriority] = useState("");
+  const [priorityObject, setPriorityObject] = useState({});
 
   const [state, setState] = useState(null);
 
@@ -45,14 +47,17 @@ function CreateTicket() {
       axios.get(urls.groups, { headers: headers }),
       axios.get(urls.categories, { headers: headers }),
       axios.get(urls.impact, { headers: headers }),
+      axios.get(urls.priorities, { headers: headers }),
     ]).then(function (results) {
       const groupsResponse = results[0].data.data;
       const categoriesResponse = results[1].data.data;
       const impactResponse = results[2].data.data;
+      const prioritiesResponse = results[3].data.data;
 
       setAssignment_group(groupsResponse);
       setCategory(categoriesResponse);
       setImpact(impactResponse);
+      setPriority(prioritiesResponse);
     });
   }, []);
 
@@ -104,6 +109,15 @@ function CreateTicket() {
         setSelectedImpact(event.target.value);
         break;
 
+      case "priority":
+        const searchPriority = findInArray({
+          array: priority,
+          searchItem: event.target.value,
+        });
+        setPriorityObject(searchPriority);
+        setSelectedPriority(event.target.value);
+        break;
+
       default:
         break;
     }
@@ -113,10 +127,13 @@ function CreateTicket() {
   console.log({ categoryObject });
   console.log({ assignedUserObject });
   console.log({ impactObject });
+  console.log({ priorityObject });
 
   return (
     <div className="h-screen w-screen bg-[whitesmoke] px-[10vw] py-[40px] flex flex-col ">
       <p className="font-light mb-10 text-[80px] text-center ">Create Ticket</p>
+
+      <p>{selectedPriority}</p>
 
       <SelectionGroup
         label="Assignment group"
@@ -159,6 +176,16 @@ function CreateTicket() {
         value={selectedImpact}
         onChange={handleSelectChange}
         data_source={impact}
+      />
+
+      <br />
+
+      <SelectionGroup
+        label="Priority"
+        name="priority"
+        value={selectedPriority}
+        onChange={handleSelectChange}
+        data_source={priority}
       />
     </div>
   );
