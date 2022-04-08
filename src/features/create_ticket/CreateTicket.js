@@ -33,6 +33,8 @@ function CreateTicket() {
   const [priorityObject, setPriorityObject] = useState({});
 
   const [state, setState] = useState(null);
+  const [selectedState, setSelectedState] = useState("");
+  const [stateObject, setStateObject] = useState({});
 
   const accessToken = useSelector(getAcessToken);
 
@@ -48,16 +50,19 @@ function CreateTicket() {
       axios.get(urls.categories, { headers: headers }),
       axios.get(urls.impact, { headers: headers }),
       axios.get(urls.priorities, { headers: headers }),
+      axios.get(urls.state, { headers: headers }),
     ]).then(function (results) {
       const groupsResponse = results[0].data.data;
       const categoriesResponse = results[1].data.data;
       const impactResponse = results[2].data.data;
       const prioritiesResponse = results[3].data.data;
+      const stateResponse = results[4].data.data;
 
       setAssignment_group(groupsResponse);
       setCategory(categoriesResponse);
       setImpact(impactResponse);
       setPriority(prioritiesResponse);
+      setState(stateResponse)
     });
   }, []);
 
@@ -117,6 +122,15 @@ function CreateTicket() {
         setPriorityObject(searchPriority);
         setSelectedPriority(event.target.value);
         break;
+      
+        case "state":
+        const searchState = findInArray({
+          array: state,
+          searchItem: event.target.value,
+        });
+        setStateObject(searchState);
+        setSelectedState(event.target.value);
+        break;
 
       default:
         break;
@@ -128,6 +142,7 @@ function CreateTicket() {
   console.log({ assignedUserObject });
   console.log({ impactObject });
   console.log({ priorityObject });
+  console.log({ stateObject });
 
   return (
     <div className="h-screen w-screen bg-[whitesmoke] px-[10vw] py-[40px] flex flex-col ">
@@ -186,6 +201,16 @@ function CreateTicket() {
         value={selectedPriority}
         onChange={handleSelectChange}
         data_source={priority}
+      />
+
+      <br />
+
+      <SelectionGroup
+        label="State"
+        name="state"
+        value={selectedState}
+        onChange={handleSelectChange}
+        data_source={state}
       />
     </div>
   );
