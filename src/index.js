@@ -13,6 +13,7 @@ import {store} from "./app/store";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistStore } from "redux-persist";
 import Login from "./features/login/Login";
+import CustomizeTicket from "./features/customize_ticket/CustomizeTicket";
 
 let persistor = persistStore(store);
 
@@ -26,7 +27,8 @@ root.render(
         <Route path="/" exact element={<Register />} />
         <Route path="/login" exact element={<Login />} />
         <Route path="/view" exact element={<App tab="home" />} />
-        <Route path="create" exact strict element={<CreateTicket />} />
+        <Route path="/create" exact strict element={<CreateTicket />} />
+        <Route path="/customize" exact strict element={<CustomizeTicket />} />
       </Routes>
     </BrowserRouter>
     </PersistGate>

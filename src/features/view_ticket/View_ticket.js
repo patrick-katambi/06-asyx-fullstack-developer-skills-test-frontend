@@ -18,6 +18,7 @@ import { getAcessToken, getUserId } from "../../app/globalStateSlice";
 import { urls } from "../../core/urls";
 import { getRequest } from "../../core/helper_functions";
 import axios from "axios";
+import { insertTicketRow } from "../customize_ticket/customize_ticket_slice";
 
 function View_ticket() {
   let navigate = useNavigate();
@@ -161,6 +162,8 @@ function TableHead() {
 }
 
 function TableBody({ tickets }) {
+  let navigate = useNavigate()
+  const dispatch = useDispatch()
   return (
     <tbody>
       {tickets.map((ticketRow, index) => {
@@ -169,7 +172,8 @@ function TableBody({ tickets }) {
             key={index}
             className="table-row"
             onClick={() => {
-              alert(ticketRow.id);
+              dispatch(insertTicketRow(ticketRow))
+              navigate('/customize')
             }}
           >
             <TableRowData data={ticketRow.id} />

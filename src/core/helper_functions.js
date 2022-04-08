@@ -16,3 +16,10 @@ export async function postRequest(props) {
     const response = await axios.post(url, data, config)
     return response.data
 }
+
+export function findInArray(props) {
+    const searchResult = props.array.filter(
+      (item) => item.name === props.searchItem
+    );
+    return searchResult[0];
+  }

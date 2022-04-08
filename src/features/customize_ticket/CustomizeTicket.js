@@ -4,21 +4,22 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { getAcessToken, getUserId } from "../../app/globalStateSlice";
 import { urls } from "../../core/urls";
-import "./create_ticket.css";
+import { getTicketData } from "./customize_ticket_slice";
 
 import { v4 as uuidv4 } from "uuid";
-import { SelectionGroup } from "../../components/SelectionGroup";
 import { findInArray } from "../../core/helper_functions";
-import { InputFieldSectionContainer } from "../../components/InputFieldSectionContainer";
 
-function CreateTicket() {
+function CustomizeTicket() {
   let navigate = useNavigate();
+  const ticketData = useSelector(getTicketData);
+  console.log(ticketData);
 
   const [ticketId, setTicketId] = useState("");
 
   const [caller, setCaller] = useState(null);
 
   const [short_desc, setShort_desc] = useState(null);
+
   const [description, setDescription] = useState(null);
 
   const created_by = useSelector(getUserId);
@@ -80,6 +81,21 @@ function CreateTicket() {
       setState(stateResponse);
     });
   }, []);
+
+  useEffect(() => {
+    setTicketId(ticketData.id);
+    setCaller(ticketData.caller);
+    setShort_desc(ticketData.short_desc);
+    setDescription(ticketData.description);
+    setDue_date(ticketData.due_date);
+    setSelectedAssignmentObject(ticketData.user_group);
+    setAssignedUserObject(ticketData.assigned_to);
+    setCategoryObject(ticketData.category);
+    setImpactObject(ticketData.impact);
+    setPriorityObject(ticketData.priority);
+    setStateObject(ticketData.state);
+  }, []);
+  console.log({ ticketId });
 
   const handleChange = (event) => {
     switch (event.target.name) {
@@ -184,166 +200,10 @@ function CreateTicket() {
   };
 
   return (
-    <div className="h-full w-full bg-[whitesmoke] px-[20vw] pt-[40px] pb-[100px] flex flex-col ">
-      <p className="font-light mb-10 text-[80px] text-center ">Create Ticket</p>
-
-      <div
-        onClick={() => navigate("/view")}
-        className="w-[100px] flex items-center justify-center font-light mb-5 mt-10 text-[30px] opacity-70 text-left cursor-pointer "
-      >
-        <span className="text-sm mr-2 ">👈</span>
-        <p>back</p>
-      </div>
-
-      <div className="flex flex-row items-center justify-between w-[100%]">
-        <div className="mr-5 w-[40%] ">TicketId</div>
-        <div className="w-[100%] p-5 font-semibold bg-[white] text-[#A2B38B] rounded-lg ">
-          {ticketId}
-        </div>
-      </div>
-
-      <br />
-
-      <InputFieldSectionContainer
-        label="Caller name"
-        htmlFor="caller"
-        type="text"
-        placeholder="Caller name ..."
-        name="caller"
-        value={caller}
-        onChange={handleChange}
-      />
-
-      <br />
-
-      <InputFieldSectionContainer
-        label="Short Description"
-        htmlFor="short_desc"
-        type="text"
-        placeholder="Short description ..."
-        name="short_desc"
-        value={short_desc}
-        onChange={handleChange}
-      />
-
-      <br />
-
-      <InputFieldSectionContainer
-        label="Full Description"
-        htmlFor="description"
-        type="text"
-        placeholder="Description ..."
-        name="description"
-        value={description}
-        onChange={handleChange}
-        textArea={true}
-      />
-
-      <br />
-
-      <InputFieldSectionContainer
-        label="Due Date"
-        htmlFor="due-date"
-        type="datetime-local"
-        name="due-date"
-        value={due_date}
-        onChange={handleChange}
-      />
-
-      <br />
-
-      <SelectionGroup
-        label="Assignment group"
-        name="assignment groups"
-        value={selectedAssignment}
-        onChange={handleChange}
-        data_source={assignment_group}
-      />
-
-      <br />
-
-      {usersByGroupId == null ? (
-        ""
-      ) : (
-        <>
-          <SelectionGroup
-            label="Users"
-            name="users"
-            value={assigned_to}
-            onChange={handleChange}
-            data_source={usersByGroupId}
-          />
-          <br />
-        </>
-      )}
-
-      <SelectionGroup
-        label="Category"
-        name="categories"
-        value={selectedCategory}
-        onChange={handleChange}
-        data_source={category}
-      />
-
-      <br />
-
-      <SelectionGroup
-        label="Impact level"
-        name="impact"
-        value={selectedImpact}
-        onChange={handleChange}
-        data_source={impact}
-      />
-
-      <br />
-
-      <SelectionGroup
-        label="Priority"
-        name="priority"
-        value={selectedPriority}
-        onChange={handleChange}
-        data_source={priority}
-      />
-
-      <br />
-
-      <SelectionGroup
-        label="State"
-        name="state"
-        value={selectedState}
-        onChange={handleChange}
-        data_source={state}
-      />
-
-      <br />
-      <br />
-      <button
-        onClick={() => {
-          console.log(data);
-
-          for (const [_, value] of Object.entries(data)) {
-            if (value === null || value === "") {
-              alert("all fields must be filled");
-              return;
-            }
-          }
-
-          axios
-            .post(urls.ticket.create, data, { headers: headers })
-            .then((response) => {
-              if (response.data.message === "SUCCESS") {
-                console.log(response);
-                navigate("/view");
-              }
-            });
-        }}
-        className="w-full bg-[#D8AC9C] px-6 py-5 font-bold rounded-lg "
-      >
-        Create Ticket
-      </button>
-      <br />
+    <div>
+      <button onClick={() => navigate("/view")}>go back</button>
     </div>
   );
 }
 
-export default CreateTicket;
+export default CustomizeTicket;
