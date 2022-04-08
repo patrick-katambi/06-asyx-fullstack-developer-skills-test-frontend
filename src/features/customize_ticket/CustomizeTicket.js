@@ -199,6 +199,7 @@ function CustomizeTicket() {
     impact: impactObject.id,
     priority: priorityObject.id,
     state: stateObject.id,
+    resolved_by: created_by,
   };
 
   return (
