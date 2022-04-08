@@ -4,9 +4,13 @@ const baseApiUrl = `${baseUrl}/api`;
 const userApiUrl = `${baseApiUrl}/user`;
 
 export const urls = {
-  user: { register: `${userApiUrl}/register`, 
-  logout: `${userApiUrl}/logout`,
-  login: `${userApiUrl}/login`,
- },
+  user: {
+    register: `${userApiUrl}/register`,
+    logout: `${userApiUrl}/logout`,
+    login: `${userApiUrl}/login`,
+  },
+  groups: `${baseApiUrl}/groups`,
+  categories: `${baseApiUrl}/categories`,
+  resolution_codes: `${baseApiUrl}/resolution_codes`,
   ticket: { getAll: `${baseApiUrl}/tickets` },
 };
