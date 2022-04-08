@@ -25,7 +25,11 @@ function CreateTicket() {
   const [categoryObject, setCategoryObject] = useState({});
 
   const [impact, setImpact] = useState(null);
+  const [selectedImpact, setSelectedImpact] = useState("");
+  const [impactObject, setImpactObject] = useState({});
+
   const [priority, setPriority] = useState(null);
+
   const [state, setState] = useState(null);
 
   const accessToken = useSelector(getAcessToken);
@@ -40,12 +44,15 @@ function CreateTicket() {
     Promise.all([
       axios.get(urls.groups, { headers: headers }),
       axios.get(urls.categories, { headers: headers }),
+      axios.get(urls.impact, { headers: headers }),
     ]).then(function (results) {
       const groupsResponse = results[0].data.data;
       const categoriesResponse = results[1].data.data;
+      const impactResponse = results[2].data.data;
 
       setAssignment_group(groupsResponse);
       setCategory(categoriesResponse);
+      setImpact(impactResponse);
     });
   }, []);
 
@@ -84,10 +91,17 @@ function CreateTicket() {
           array: usersByGroupId,
           searchItem: event.target.value,
         });
-
         setAssignedUserObject(searchUsers);
-
         setAssigned_to(event.target.value);
+        break;
+
+      case "impact":
+        const searchImpact = findInArray({
+          array: impact,
+          searchItem: event.target.value,
+        });
+        setImpactObject(searchImpact);
+        setSelectedImpact(event.target.value);
         break;
 
       default:
@@ -98,10 +112,11 @@ function CreateTicket() {
   console.log({ selectedAssignmentObject });
   console.log({ categoryObject });
   console.log({ assignedUserObject });
+  console.log({ impactObject });
 
   return (
     <div className="h-screen w-screen bg-[whitesmoke] px-[10vw] py-[40px] flex flex-col ">
-      <p className="font-light text-[80px] text-center ">Create Ticket</p>
+      <p className="font-light mb-10 text-[80px] text-center ">Create Ticket</p>
 
       <SelectionGroup
         label="Assignment group"
@@ -134,6 +149,16 @@ function CreateTicket() {
         value={selectedCategory}
         onChange={handleSelectChange}
         data_source={category}
+      />
+
+      <br />
+
+      <SelectionGroup
+        label="Impact level"
+        name="impact"
+        value={selectedImpact}
+        onChange={handleSelectChange}
+        data_source={impact}
       />
     </div>
   );
