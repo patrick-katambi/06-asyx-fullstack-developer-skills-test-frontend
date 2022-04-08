@@ -4,7 +4,8 @@ import { urls } from "../../core/urls";
 
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setAcessToken } from "../../app/globalStateSlice";
+import { setUserAcess } from "../../app/globalStateSlice";
+import { FormField } from "../../components/FormField";
 
 function Register() {
   let navigate = useNavigate();
@@ -66,8 +67,9 @@ function Register() {
               protected: false,
             });
             const accessToken = response.data.token
-            console.log(accessToken)
-            dispatch(setAcessToken(accessToken))
+            const user_id = response.data.user.id
+            console.log({accessToken, user_id})
+            dispatch(setUserAcess({accessToken, user_id}))
             navigate("/view")
             break;
   
@@ -136,7 +138,9 @@ function Register() {
       </div>
       <p className="mt-5">
         or you can{" "}
-        <span className="text-lg font-thin underline underline-offset-4 cursor-pointer">
+        <span 
+        onClick={() => navigate('/login')}
+        className="text-lg font-thin underline underline-offset-4 cursor-pointer">
           Login instead
         </span>
       </p>
@@ -146,15 +150,4 @@ function Register() {
 
 export default Register;
 
-function FormField(props) {
-  return (
-    <input
-      type={props.type}
-      placeholder={props.placeholder}
-      name={props.name}
-      value={props.value}
-      onChange={props.onChange}
-      className="border-none outline-none w-full py-4 px-5 rounded-lg font-bold"
-    />
-  );
-}
+
