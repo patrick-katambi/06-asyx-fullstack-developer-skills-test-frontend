@@ -12,6 +12,7 @@ export function InputFieldSectionContainer(props) {
         value={props.value}
         onChange={props.onChange}
         textArea={props.textArea}
+        disabled={props.disabled}
       />
     </div>
   );

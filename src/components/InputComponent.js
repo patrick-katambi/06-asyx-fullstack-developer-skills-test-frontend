@@ -7,7 +7,8 @@ export function InputComponent(props) {
           placeholder={props.placeholder || ""}
           value={props.value || ""}
           onChange={props.onChange}
-          className="w-[100%] p-5 outline-none border-none rounded-lg "
+          disabled={props.disabled}
+          className={`w-[100%] p-5 outline-none border-none rounded-lg ${props.disabled ? 'bg-[white]' : ''} `}
         />
       ) : (
         <input
@@ -16,7 +17,8 @@ export function InputComponent(props) {
           placeholder={props.placeholder || ""}
           value={props.value || ""}
           onChange={props.onChange}
-          className="w-[100%] p-5 outline-none border-none rounded-lg "
+          disabled={props.disabled}
+          className={`w-[100%] p-5 outline-none border-none rounded-lg ${props.disabled ? 'bg-[white]' : ''} `}
         />
       )}
     </>

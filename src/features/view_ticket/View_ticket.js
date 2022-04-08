@@ -59,7 +59,7 @@ function View_ticket() {
       {status !== "idle" ? (
         <FetchingTicketsLoading />
       ) : (
-        <div className="w-screen px-[10vw] relative">
+        <div className="h-full w-screen bg-[whitesmoke] px-[10vw] pt-[40px] pb-[100px] relative">
           <p className="font-light text-[80px] text-center py-5">
             Ticket Viewing
           </p>
@@ -72,7 +72,7 @@ function View_ticket() {
                   if (response.data.message === "SUCCESS") navigate("/");
                 });
             }}
-            className="absolute top-[80px] right-[10vw] text-[grey] font-bold cursor-pointer opacity-80 "
+            className="absolute top-[120px] right-[10vw] text-[grey] font-bold cursor-pointer opacity-80 "
           >
             Logout
           </p>
@@ -114,16 +114,16 @@ function FetchingTicketsLoading() {
 }
 
 function TableHeadTitle({ title }) {
-  return <th className="pl-5 py-5">{title}</th>;
+  return <th className="p-8 tracking-widest ">{title}</th>;
 }
 
 function TableRowData({ data }) {
-  return <td className="text-base font-normal pl-5 py-5">{data ?? "null"}</td>;
+  return <td className="h-20 text-[15px] text-base font-normal  px-8 overflow-hidden mt-2 ">{data ?? "null"}</td>;
 }
 
 function TicketTable({ tickets }) {
   return (
-    <div className="mt-[20px]">
+    <div className="my-[20px]">
       <table className="bg-[#F4F9F9] w-full rounded-lg border-collapse overflow-hidden shadow-lg">
         <TableHead />
         <TableBody tickets={tickets} />
@@ -150,12 +150,6 @@ function TableHead() {
             <TableHeadTitle key={index} identifier={index} title={title} />
           );
         })}
-        {/* <TableHeadTitle title={"ID"} />
-        <TableHeadTitle title={"CALLER"} />
-        <TableHeadTitle title={"SHORT DESC"} />
-        <TableHeadTitle title={"DUE DATE"} />
-        <TableHeadTitle title={"CATEGORY"} />
-        <TableHeadTitle title={"PRIORITY"} /> */}
       </tr>
     </thead>
   );

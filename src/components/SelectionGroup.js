@@ -1,7 +1,7 @@
 export function SelectionGroup(props) {
   return (
     <div className="flex flex-row items-center justify-between w-[100%] ">
-      <p className="mr-5 w-[40%] ">{props.label}</p>
+      <p className="mr-5 w-[40%] font-semibold ">{props.label}</p>
       <select
         name={props.name}
         value={props.value || ""}

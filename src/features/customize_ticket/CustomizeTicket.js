@@ -8,11 +8,12 @@ import { getTicketData } from "./customize_ticket_slice";
 
 import { v4 as uuidv4 } from "uuid";
 import { findInArray } from "../../core/helper_functions";
+import { InputFieldSectionContainer } from "../../components/InputFieldSectionContainer";
+import { SelectionGroup } from "../../components/SelectionGroup";
 
 function CustomizeTicket() {
   let navigate = useNavigate();
   const ticketData = useSelector(getTicketData);
-  console.log(ticketData);
 
   const [ticketId, setTicketId] = useState("");
 
@@ -89,13 +90,14 @@ function CustomizeTicket() {
     setDescription(ticketData.description);
     setDue_date(ticketData.due_date);
     setSelectedAssignmentObject(ticketData.user_group);
+    setSelectedAssignment(ticketData.name);
     setAssignedUserObject(ticketData.assigned_to);
     setCategoryObject(ticketData.category);
     setImpactObject(ticketData.impact);
     setPriorityObject(ticketData.priority);
     setStateObject(ticketData.state);
+    setSelectedState(ticketData.state.name);
   }, []);
-  console.log({ ticketId });
 
   const handleChange = (event) => {
     switch (event.target.name) {
@@ -200,10 +202,139 @@ function CustomizeTicket() {
   };
 
   return (
-    <div>
-      <button onClick={() => navigate("/view")}>go back</button>
+    <div className="h-full w-full bg-[whitesmoke] px-[20vw] pt-[40px] pb-[100px] flex flex-col ">
+      <p className="font-light mb-10 text-[80px] text-center ">
+        Customize Ticket
+      </p>
+
+      <div
+        onClick={() => navigate("/view")}
+        className="w-[100px] flex items-center justify-center font-light mb-5 mt-10 text-[30px] opacity-70 text-left cursor-pointer "
+      >
+        <span className="text-sm mr-2 ">👈</span>
+        <p>back</p>
+      </div>
+
+      <div className="flex flex-row items-center justify-between w-[100%]">
+        <div className="mr-5 w-[40%] ">TicketId</div>
+        <div className="w-[100%] p-5 font-semibold bg-[white] text-[#A2B38B] rounded-lg ">
+          {ticketId}
+        </div>
+      </div>
+
+      <br />
+
+      <InputFieldSectionContainer
+        label="Caller name"
+        htmlFor="caller"
+        type="text"
+        placeholder="Caller name ..."
+        name="caller"
+        value={caller}
+        onChange={handleChange}
+        disabled={true}
+      />
+
+      <br />
+
+      <InputFieldSectionContainer
+        label="Short Description"
+        htmlFor="short_desc"
+        type="text"
+        placeholder="Short description ..."
+        name="short_desc"
+        value={short_desc}
+        onChange={handleChange}
+        disabled={true}
+      />
+
+      <br />
+
+      <InputFieldSectionContainer
+        label="Full Description"
+        htmlFor="description"
+        type="text"
+        placeholder="Description ..."
+        name="description"
+        value={description}
+        onChange={handleChange}
+        textArea={true}
+        disabled={true}
+      />
+
+      <br />
+
+      <InputFieldSectionContainer
+        label="Due Date"
+        htmlFor="due-date"
+        type="datetime-local"
+        name="due-date"
+        value={due_date}
+        onChange={handleChange}
+        disabled={true}
+      />
+
+      <br />
+      <ReadOnlyField
+        label="Assignment group"
+        value={ticketData.user_group.name}
+      />
+      <br />
+      <ReadOnlyField label="Assigned to" value={ticketData.assigned_to.name} />
+      <br />
+      <ReadOnlyField label="Category" value={ticketData.category.name} />
+      <br />
+      <ReadOnlyField label="Impact level" value={ticketData.impact.name} />
+      <br />
+      <ReadOnlyField label="Priority" value={ticketData.priority.name} />
+      <br />
+
+      <SelectionGroup
+        label="State"
+        name="state"
+        value={selectedState}
+        onChange={handleChange}
+        data_source={state}
+      />
+
+      <br />
+      <br />
+      <button
+        onClick={() => {
+          console.log(data);
+          for (const [_, value] of Object.entries(data)) {
+            if (value === null || value === "") {
+              alert("all fields must be filled");
+              return;
+            }
+          }
+
+          axios
+            .post(urls.ticket.update, data, { headers: headers })
+            .then((response) => {
+              if (response.data.message === "SUCCESS") {
+                navigate("/view");
+              }
+            });
+        }}
+        className="w-full bg-[#D8AC9C] px-6 py-5 font-bold rounded-lg "
+      >
+        Save Changes
+      </button>
+      <br />
     </div>
   );
 }
 
 export default CustomizeTicket;
+
+function ReadOnlyField(props) {
+  return (
+    <div className="flex flex-row items-center justify-between w-[100%]">
+      <div className="mr-5 w-[40%] font-semibold ">{props.label}</div>
+      <div className="w-[100%] p-5 font-semibold bg-[white] text-[#A2B38B] rounded-lg ">
+        {props.value}
+      </div>
+    </div>
+  );
+}

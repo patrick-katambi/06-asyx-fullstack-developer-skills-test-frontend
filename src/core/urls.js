@@ -18,5 +18,6 @@ export const urls = {
   ticket: {
     getAll: `${baseApiUrl}/tickets`,
     create: `${baseApiUrl}/tickets/create`,
+    update: `${baseApiUrl}/tickets/update`,
   },
 };

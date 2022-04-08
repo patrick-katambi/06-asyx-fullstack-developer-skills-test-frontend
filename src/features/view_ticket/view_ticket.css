@@ -1,9 +1,8 @@
 .table-row {
     cursor: pointer;
-    transition: 0.5s;
+    transition: 0.3s;
 }
 
 .table-row:hover {
-    background-color: #C2B092;
-    font-weight: bold;
+    background-color: #e6b9a9;
 }
