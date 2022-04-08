@@ -1,10 +1,14 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { getAcessToken } from "../../app/globalStateSlice";
 import { urls } from "../../core/urls";
+import "./create_ticket.css";
 
 function CreateTicket() {
+  let navigate = useNavigate();
+
   const [ticketId, setTicketId] = useState(null);
   const [caller, setCaller] = useState(null);
   const [short_desc, setShort_desc] = useState(null);
@@ -62,11 +66,11 @@ function CreateTicket() {
       setCategory(categoriesResponse);
       setImpact(impactResponse);
       setPriority(prioritiesResponse);
-      setState(stateResponse)
+      setState(stateResponse);
     });
   }, []);
 
-  const handleSelectChange = (event) => {
+  const handleChange = (event) => {
     switch (event.target.name) {
       case "assignment groups":
         setAssigned_to(null);
@@ -122,14 +126,18 @@ function CreateTicket() {
         setPriorityObject(searchPriority);
         setSelectedPriority(event.target.value);
         break;
-      
-        case "state":
+
+      case "state":
         const searchState = findInArray({
           array: state,
           searchItem: event.target.value,
         });
         setStateObject(searchState);
         setSelectedState(event.target.value);
+        break;
+
+      case "due-date":
+        setDue_date(event.target.value);
         break;
 
       default:
@@ -145,16 +153,36 @@ function CreateTicket() {
   console.log({ stateObject });
 
   return (
-    <div className="h-screen w-screen bg-[whitesmoke] px-[10vw] py-[40px] flex flex-col ">
+    <div className="h-screen w-screen bg-[whitesmoke] px-[20vw] py-[40px] flex flex-col ">
       <p className="font-light mb-10 text-[80px] text-center ">Create Ticket</p>
 
-      <p>{selectedPriority}</p>
+      <p
+        onClick={() => navigate("/view")}
+        className="font-light mb-5 mt-10 text-[30px] opacity-70 text-left cursor-pointer "
+      >
+        👈 back
+      </p>
+
+      <div className="flex flex-row items-center justify-between w-[100%] ">
+        <label className="mr-5 w-[40%] " htmlFor="due-date">
+          Due Date:
+        </label>
+        <input
+          type="datetime-local"
+          name="due-date"
+          value={due_date || ""}
+          onChange={handleChange}
+          className="w-[100%] p-5 outline-none border-none "
+        />
+      </div>
+
+      <br />
 
       <SelectionGroup
         label="Assignment group"
         name="assignment groups"
         value={selectedAssignment}
-        onChange={handleSelectChange}
+        onChange={handleChange}
         data_source={assignment_group}
       />
 
@@ -168,7 +196,7 @@ function CreateTicket() {
             label="Users"
             name="users"
             value={assigned_to}
-            onChange={handleSelectChange}
+            onChange={handleChange}
             data_source={usersByGroupId}
           />
           <br />
@@ -179,7 +207,7 @@ function CreateTicket() {
         label="Category"
         name="categories"
         value={selectedCategory}
-        onChange={handleSelectChange}
+        onChange={handleChange}
         data_source={category}
       />
 
@@ -189,7 +217,7 @@ function CreateTicket() {
         label="Impact level"
         name="impact"
         value={selectedImpact}
-        onChange={handleSelectChange}
+        onChange={handleChange}
         data_source={impact}
       />
 
@@ -199,7 +227,7 @@ function CreateTicket() {
         label="Priority"
         name="priority"
         value={selectedPriority}
-        onChange={handleSelectChange}
+        onChange={handleChange}
         data_source={priority}
       />
 
@@ -209,7 +237,7 @@ function CreateTicket() {
         label="State"
         name="state"
         value={selectedState}
-        onChange={handleSelectChange}
+        onChange={handleChange}
         data_source={state}
       />
     </div>
@@ -226,7 +254,7 @@ function SelectionGroup(props) {
         name={props.name}
         value={props.value || ""}
         onChange={props.onChange}
-        className="w-[100%]"
+        className="w-[100%] p-5 cursor-pointer appearance-none outline-none border-none "
       >
         <option value="" disabled>
           Select your option
