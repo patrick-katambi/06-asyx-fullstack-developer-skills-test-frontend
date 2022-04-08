@@ -14,7 +14,7 @@ import {
 import { useParams, useNavigate, useLocation, Link } from "react-router-dom";
 
 import "./view_ticket.css";
-import { getAcessToken } from "../../app/globalStateSlice";
+import { getAcessToken, getUserId } from "../../app/globalStateSlice";
 import { urls } from "../../core/urls";
 import { getRequest } from "../../core/helper_functions";
 import axios from "axios";
@@ -30,21 +30,20 @@ function View_ticket() {
   const status = useSelector(getTicketFetchingStatus);
 
   const accessToken = useSelector(getAcessToken);
+  const user_id = useSelector(getUserId);
+
+  const headers = {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${accessToken}`,
+  };
 
   useEffect(() => {
-    console.log(accessToken);
-    axios
-      .get(urls.ticket.getAll, {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-      })
-      .then((response) => {
-        console.log(response);
-        dispatch(populateTickets(response.data));
-      });
+    console.log({ accessToken, user_id });
+    axios.get(urls.ticket.getAll, { headers: headers }).then((response) => {
+      console.log(response);
+      dispatch(populateTickets(response.data));
+    });
   }, []);
 
   const inputOnChange = (event) => {
@@ -64,7 +63,19 @@ function View_ticket() {
           <p className="font-light text-[80px] text-center py-5">
             Ticket Viewing
           </p>
-          <p className="absolute top-[80px] right-[10vw] text-[grey] font-bold cursor-pointer opacity-80 ">Logout</p>
+          <p
+            onClick={() => {
+              axios
+                .get(`${urls.user.logout}/${user_id}`, { headers: headers })
+                .then((response) => {
+                  console.log(response);
+                  if (response.data.message === "SUCCESS") navigate("/");
+                });
+            }}
+            className="absolute top-[80px] right-[10vw] text-[grey] font-bold cursor-pointer opacity-80 "
+          >
+            Logout
+          </p>
           <div className="py-4 flex flex-row items-center justify-between">
             <input
               type="text"
@@ -77,8 +88,9 @@ function View_ticket() {
               <button
                 className="h-full bg-[#D8AC9C] px-6 py-5 font-bold rounded-lg"
                 onClick={() => {
-                  console.log('navigating ...')
-                  navigate("/create")}}
+                  console.log("navigating ...");
+                  navigate("/create");
+                }}
               >
                 Create Ticket
               </button>
