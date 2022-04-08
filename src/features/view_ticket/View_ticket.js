@@ -41,7 +41,6 @@ function View_ticket() {
   useEffect(() => {
     console.log({ accessToken, user_id });
     axios.get(urls.ticket.getAll, { headers: headers }).then((response) => {
-      console.log(response);
       dispatch(populateTickets(response.data));
     });
   }, []);
@@ -59,7 +58,7 @@ function View_ticket() {
       {status !== "idle" ? (
         <FetchingTicketsLoading />
       ) : (
-        <div className="px-[10vw] relative">
+        <div className="w-screen px-[10vw] relative">
           <p className="font-light text-[80px] text-center py-5">
             Ticket Viewing
           </p>
@@ -174,7 +173,7 @@ function TableBody({ tickets }) {
             }}
           >
             <TableRowData data={ticketRow.id} />
-            <TableRowData data={ticketRow.caller.name} />
+            <TableRowData data={ticketRow.caller} />
             <TableRowData data={ticketRow.short_desc} />
             <TableRowData data={ticketRow.due_date} />
             <TableRowData data={ticketRow.category.name} />

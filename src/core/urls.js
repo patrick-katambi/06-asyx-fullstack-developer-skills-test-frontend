@@ -15,5 +15,8 @@ export const urls = {
   impact: `${baseApiUrl}/impact`,
   priorities: `${baseApiUrl}/priorities`,
   state: `${baseApiUrl}/state`,
-  ticket: { getAll: `${baseApiUrl}/tickets` },
+  ticket: {
+    getAll: `${baseApiUrl}/tickets`,
+    create: `${baseApiUrl}/tickets/create`,
+  },
 };

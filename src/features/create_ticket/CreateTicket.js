@@ -2,18 +2,24 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { getAcessToken } from "../../app/globalStateSlice";
+import { getAcessToken, getUserId } from "../../app/globalStateSlice";
 import { urls } from "../../core/urls";
 import "./create_ticket.css";
+
+import { v4 as uuidv4 } from "uuid";
 
 function CreateTicket() {
   let navigate = useNavigate();
 
-  const [ticketId, setTicketId] = useState(null);
+  const [ticketId, setTicketId] = useState("");
+
   const [caller, setCaller] = useState(null);
+
   const [short_desc, setShort_desc] = useState(null);
   const [description, setDescription] = useState(null);
-  const [created_by, setCreated_by] = useState(null);
+
+  const created_by = useSelector(getUserId);
+
   const [due_date, setDue_date] = useState(null);
 
   const [assignment_group, setAssignment_group] = useState(null);
@@ -49,6 +55,8 @@ function CreateTicket() {
   };
 
   useEffect(() => {
+    setTicketId(uuidv4());
+
     Promise.all([
       axios.get(urls.groups, { headers: headers }),
       axios.get(urls.categories, { headers: headers }),
@@ -140,41 +148,104 @@ function CreateTicket() {
         setDue_date(event.target.value);
         break;
 
+      case "caller":
+        setCaller(event.target.value);
+        break;
+
+      case "short_desc":
+        setShort_desc(event.target.value);
+        break;
+
+      case "description":
+        setDescription(event.target.value);
+        break;
+
       default:
         break;
     }
   };
 
-  console.log({ selectedAssignmentObject });
-  console.log({ categoryObject });
-  console.log({ assignedUserObject });
-  console.log({ impactObject });
-  console.log({ priorityObject });
-  console.log({ stateObject });
+  const data = {
+    id: ticketId,
+    caller: caller,
+    short_desc: short_desc,
+    description: description,
+    created_by: created_by,
+    due_date: due_date,
+    user_group: selectedAssignmentObject.id,
+    assigned_to: assignedUserObject.id,
+    category: categoryObject.id,
+    impact: impactObject.id,
+    priority: priorityObject.id,
+    state: stateObject.id,
+  };
 
   return (
-    <div className="h-screen w-screen bg-[whitesmoke] px-[20vw] py-[40px] flex flex-col ">
+    <div className="h-full w-full bg-[whitesmoke] px-[20vw] pt-[40px] pb-[100px] flex flex-col ">
       <p className="font-light mb-10 text-[80px] text-center ">Create Ticket</p>
 
-      <p
+      <div
         onClick={() => navigate("/view")}
-        className="font-light mb-5 mt-10 text-[30px] opacity-70 text-left cursor-pointer "
+        className="w-[100px] flex items-center justify-center font-light mb-5 mt-10 text-[30px] opacity-70 text-left cursor-pointer "
       >
-        👈 back
-      </p>
-
-      <div className="flex flex-row items-center justify-between w-[100%] ">
-        <label className="mr-5 w-[40%] " htmlFor="due-date">
-          Due Date:
-        </label>
-        <input
-          type="datetime-local"
-          name="due-date"
-          value={due_date || ""}
-          onChange={handleChange}
-          className="w-[100%] p-5 outline-none border-none "
-        />
+        <span className="text-sm mr-2 ">👈</span>
+        <p>back</p>
       </div>
+
+      <div className="flex flex-row items-center justify-between w-[100%]">
+        <div className="mr-5 w-[40%] ">TicketId</div>
+        <div className="w-[100%] p-5 font-semibold bg-[white] text-[#A2B38B] rounded-lg ">
+          {ticketId}
+        </div>
+      </div>
+
+      <br />
+
+      <InputFieldSectionContainer
+        label="Caller name"
+        htmlFor="caller"
+        type="text"
+        placeholder="Caller name ..."
+        name="caller"
+        value={caller}
+        onChange={handleChange}
+      />
+
+      <br />
+
+      <InputFieldSectionContainer
+        label="Short Description"
+        htmlFor="short_desc"
+        type="text"
+        placeholder="Short description ..."
+        name="short_desc"
+        value={short_desc}
+        onChange={handleChange}
+      />
+
+      <br />
+
+      <InputFieldSectionContainer
+        label="Full Description"
+        htmlFor="description"
+        type="text"
+        placeholder="Description ..."
+        name="description"
+        value={description}
+        onChange={handleChange}
+        textArea={true}
+      />
+
+      <br />
+
+      <InputFieldSectionContainer
+        label="Due Date"
+        htmlFor="due-date"
+        type="datetime-local"
+        name="due-date"
+        value={due_date}
+        onChange={handleChange}
+      />
 
       <br />
 
@@ -240,6 +311,34 @@ function CreateTicket() {
         onChange={handleChange}
         data_source={state}
       />
+
+      <br />
+      <br />
+      <button
+        onClick={() => {
+          console.log(data);
+
+          for (const [_, value] of Object.entries(data)) {
+            if (value === null || value === "") {
+              alert("all fields must be filled");
+              return;
+            }
+          }
+
+          axios
+            .post(urls.ticket.create, data, { headers: headers })
+            .then((response) => {
+              if (response.data.message === "SUCCESS") {
+                console.log(response);
+                navigate("/view");
+              }
+            });
+        }}
+        className="w-full bg-[#D8AC9C] px-6 py-5 font-bold rounded-lg "
+      >
+        Create Ticket
+      </button>
+      <br />
     </div>
   );
 }
@@ -254,7 +353,7 @@ function SelectionGroup(props) {
         name={props.name}
         value={props.value || ""}
         onChange={props.onChange}
-        className="w-[100%] p-5 cursor-pointer appearance-none outline-none border-none "
+        className="w-[100%] p-5 cursor-pointer appearance-none outline-none border-none rounded-lg "
       >
         <option value="" disabled>
           Select your option
@@ -274,4 +373,53 @@ function findInArray(props) {
     (item) => item.name === props.searchItem
   );
   return searchResult[0];
+}
+
+function InputFieldSectionContainer(props) {
+  return (
+    <div className="flex flex-row items-center justify-between w-[100%] ">
+      <LabelComponent label={props.label} htmlFor={props.htmlFor} />
+      <InputComponent
+        type={props.type}
+        name={props.name}
+        placeholder={props.placeholder}
+        value={props.value}
+        onChange={props.onChange}
+        textArea={props.textArea}
+      />
+    </div>
+  );
+}
+
+function LabelComponent(props) {
+  return (
+    <label className="mr-5 w-[40%] " htmlFor={props.htmlFor}>
+      {props.label}
+    </label>
+  );
+}
+
+function InputComponent(props) {
+  return (
+    <>
+      {props.textArea ? (
+        <textarea
+          name={props.name}
+          placeholder={props.placeholder || ""}
+          value={props.value || ""}
+          onChange={props.onChange}
+          className="w-[100%] p-5 outline-none border-none rounded-lg "
+        />
+      ) : (
+        <input
+          type={props.type}
+          name={props.name}
+          placeholder={props.placeholder || ""}
+          value={props.value || ""}
+          onChange={props.onChange}
+          className="w-[100%] p-5 outline-none border-none rounded-lg "
+        />
+      )}
+    </>
+  );
 }
